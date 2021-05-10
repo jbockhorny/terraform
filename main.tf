@@ -14,42 +14,42 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "myterraformgroup" {
-  name     = "myTFResourceGroup"
+resource "azurerm_resource_group" "terraformResourceGroup" {
+  name     = "terraformResourceGroup"
   location = "eastus"
   tags = {
     "Environment" = "atividade terraform"
   }
 }
 
-resource "azurerm_virtual_network" "myterraformnetwork" {
-  name                = "myVnet"
+resource "azurerm_virtual_network" "terraformVirtualNetwork" {
+  name                = "terraformVirtualNetwork"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.myterraformgroup.location
-  resource_group_name = azurerm_resource_group.myterraformgroup.name
+  location            = azurerm_resource_group.terraformResourceGroup.location
+  resource_group_name = azurerm_resource_group.terraformResourceGroup.name
 }
 
-resource "azurerm_subnet" "myterraformsubnet" {
-  name                 = "mySubnet"
-  resource_group_name  = azurerm_resource_group.myterraformgroup.name
-  virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
+resource "azurerm_subnet" "terraformSubnet" {
+  name                 = "terraformSubnet"
+  resource_group_name  = azurerm_resource_group.terraformResourceGroup.name
+  virtual_network_name = azurerm_virtual_network.terraformVirtualNetwork.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_public_ip" "myterraformpublicip" {
-  name                = "myPublicIP"
-  location            = azurerm_resource_group.myterraformgroup.location
-  resource_group_name = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_public_ip" "terraformPublicIp" {
+  name                = "terraformPublicIp"
+  location            = azurerm_resource_group.terraformResourceGroup.location
+  resource_group_name = azurerm_resource_group.terraformResourceGroup.name
   allocation_method   = "Static"
 }
 
-resource "azurerm_network_security_group" "myterraformnsg" {
-  name                = "myNetworkSecurityGroup"
-  location            = azurerm_resource_group.myterraformgroup.location
-  resource_group_name = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_network_security_group" "terraformSecurityGroup" {
+  name                = "terraformSecurityGroup"
+  location            = azurerm_resource_group.terraformResourceGroup.location
+  resource_group_name = azurerm_resource_group.terraformResourceGroup.name
 
     security_rule {
-    name                       = "MYSQL"
+    name                       = "mysql"
     priority                   = 1000
     direction                  = "Inbound"
     access                     = "Allow"
@@ -61,7 +61,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
   }
 
   security_rule {
-    name                       = "SSH"
+    name                       = "ssh"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
@@ -73,41 +73,41 @@ resource "azurerm_network_security_group" "myterraformnsg" {
   }
 }
 
-resource "azurerm_network_interface" "myterraformnic" {
-  name                = "myNIC"
-  location            = azurerm_resource_group.myterraformgroup.location
-  resource_group_name = azurerm_resource_group.myterraformgroup.name
+resource "azurerm_network_interface" "terraformNetworkInterface" {
+  name                = "terraformNetworkInterface"
+  location            = azurerm_resource_group.terraformResourceGroup.location
+  resource_group_name = azurerm_resource_group.terraformResourceGroup.name
 
   ip_configuration {
-    name                          = "niConfiguration"
-    subnet_id                     = azurerm_subnet.myterraformsubnet.id
+    name                          = "ipConfiguration"
+    subnet_id                     = azurerm_subnet.terraformSubnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
+    public_ip_address_id          = azurerm_public_ip.terraformPublicIp.id
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "myinterfacesecurity" {
-  network_interface_id      = azurerm_network_interface.myterraformnic.id
-  network_security_group_id = azurerm_network_security_group.myterraformnsg.id
+resource "azurerm_network_interface_security_group_association" "terraformSecurityGroupAssociation" {
+  network_interface_id      = azurerm_network_interface.terraformNetworkInterface.id
+  network_security_group_id = azurerm_network_security_group.terraformSecurityGroup.id
 }
 
-resource "azurerm_storage_account" "storageaccountmysql" {
-  name                     = "storageaccountmsql"
-  resource_group_name      = azurerm_resource_group.myterraformgroup.name
-  location                 = azurerm_resource_group.myterraformgroup.location
+resource "azurerm_storage_account" "terraformStorageAccountMysql" {
+  name                     = "terraformatorageaccount"
+  resource_group_name      = azurerm_resource_group.terraformResourceGroup.name
+  location                 = azurerm_resource_group.terraformResourceGroup.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
-resource "azurerm_linux_virtual_machine" "myterraformvm" {
-  name                  = "myVM"
-  location              = azurerm_resource_group.myterraformgroup.location
-  resource_group_name   = azurerm_resource_group.myterraformgroup.name
-  network_interface_ids = [azurerm_network_interface.myterraformnic.id]
+resource "azurerm_linux_virtual_machine" "terraformVirtualMachine" {
+  name                  = "terraformVirtualMachine"
+  location              = azurerm_resource_group.terraformResourceGroup.location
+  resource_group_name   = azurerm_resource_group.terraformResourceGroup.name
+  network_interface_ids = [azurerm_network_interface.terraformNetworkInterface.id]
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "myOsDisk"
+    name                 = "osDisk"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -119,20 +119,20 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     version   = "latest"
   }
 
-  computer_name                   = "myvm"
+  computer_name                   = "terraformVirtualMachine"
   admin_username                  = "adminuser"
   admin_password                  = "abcde@123"
   disable_password_authentication = false
 
   boot_diagnostics {
-    storage_account_uri = azurerm_storage_account.storageaccountmysql.primary_blob_endpoint
+    storage_account_uri = azurerm_storage_account.terraformStorageAccountMysql.primary_blob_endpoint
   }
 
-  depends_on = [azurerm_resource_group.myterraformgroup]
+  depends_on = [azurerm_resource_group.terraformResourceGroup]
 }
 
 resource "time_sleep" "wait_30_seconds_db" {
-  depends_on = [azurerm_linux_virtual_machine.myterraformvm]
+  depends_on = [azurerm_linux_virtual_machine.terraformVirtualMachine]
   create_duration = "30s"
 }
 
@@ -142,7 +142,7 @@ resource "null_resource" "upload_db" {
       type     = "ssh"
       user     = "adminuser"
       password = "abcde@123"
-      host     = azurerm_public_ip.myterraformpublicip.ip_address
+      host     = azurerm_public_ip.terraformPublicIp.ip_address
     }
     source      = "config"
     destination = "/home/adminuser"
@@ -161,7 +161,7 @@ resource "null_resource" "deploy_db" {
       type     = "ssh"
       user     = "adminuser"
       password = "abcde@123"
-      host     = azurerm_public_ip.myterraformpublicip.ip_address
+      host     = azurerm_public_ip.terraformPublicIp.ip_address
     }
     inline = [
       "sudo apt-get update",
@@ -175,5 +175,5 @@ resource "null_resource" "deploy_db" {
 }
 
 output "public_ip_address_mysql" {
-  value = azurerm_public_ip.myterraformpublicip.ip_address
+  value = azurerm_public_ip.terraformPublicIp.ip_address
 }
