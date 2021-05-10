@@ -1,4 +1,4 @@
-CREATE USER IF NOT EXISTS 'terraform'@'%' IDENTIFIED BY 'teste';
+CREATE USER IF NOT EXISTS 'usermysql'@'%' IDENTIFIED BY 'abcde@123';
 
-GRANT ALL PRIVILEGES ON *.* TO 'terraform'@'%' IDENTIFIED BY 'teste';
+GRANT ALL PRIVILEGES ON *.* TO 'terraform'@'%' IDENTIFIED BY 'abcde@123';
 FLUSH PRIVILEGES;

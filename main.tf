@@ -167,7 +167,7 @@ resource "null_resource" "deploy_db" {
       "sudo apt-get update",
       "sudo apt-get install -y mysql-server-5.7",
       "sudo mysql < /home/adminuser/config/user.sql",
-      "sudo cp -f /home/adminuser/config/mysqld.cnf /etc/mysql/mysqld.conf.d/mysql.cnf",
+      "sudo cp -f /home/adminuser/config/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf",
       "sudo service mysql restart",
       "sleep 20",
     ]
